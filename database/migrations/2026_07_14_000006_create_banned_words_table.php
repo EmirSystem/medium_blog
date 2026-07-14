@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('banned_word', function (Blueprint $table) {
+        Schema::create('banned_words', function (Blueprint $table) {
             $table->id();
             $table->string('word');
             $table->enum('status', ['active', 'passive'])->default('active');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('banned_word');
+        Schema::dropIfExists('banned_words');
     }
 };
