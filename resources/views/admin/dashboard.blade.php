@@ -4,51 +4,82 @@
 
 @section('content')
 
-    <h2 class="text-2xl font-bold mb-6">Hoş geldin, {{ Auth::user()->name }}!</h2>
+    <div class="page-header">
+        <h2 class="page-title">
+            <span class="page-title-icon">📊</span>
+            Hoş geldin, {{ Auth::user()->name }}!
+        </h2>
+        <span class="badge badge-purple">Süper Admin</span>
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-gray-500 text-sm">Onay Bekleyen Yazılar</h3>
-            <p class="text-3xl font-bold text-blue-600">{{ \App\Models\Blog::where('status', 'pending')->count() }}</p>
+    {{-- Stat Cards --}}
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-bottom:28px;">
+
+        <div class="stat-card stat-card-1">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-label">Onay Bekleyen</div>
+            <div class="stat-value">{{ \App\Models\Blog::where('status', 'pending')->count() }}</div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-gray-500 text-sm">Toplam Kullanıcı</h3>
-            <p class="text-3xl font-bold text-green-600">{{ \App\Models\User::count() }}</p>
+
+        <div class="stat-card stat-card-2">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Toplam Kullanıcı</div>
+            <div class="stat-value">{{ \App\Models\User::count() }}</div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-gray-500 text-sm">Toplam Kategori</h3>
-            <p class="text-3xl font-bold text-yellow-600">{{ \App\Models\Category::count() }}</p>
+
+        <div class="stat-card stat-card-3">
+            <div class="stat-icon">📁</div>
+            <div class="stat-label">Toplam Kategori</div>
+            <div class="stat-value">{{ \App\Models\Category::count() }}</div>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-bold mb-4">Son Onay Bekleyen Yazılar</h3>
-        <table class="w-full">
+    {{-- Recent pending table --}}
+    <div class="page-header" style="margin-bottom:16px;">
+        <h3 style="font-size:16px; font-weight:700; color:#f1f5f9; display:flex; align-items:center; gap:8px;">
+            <span>📋</span> Son Onay Bekleyen Yazılar
+        </h3>
+        <a href="{{ route('admin.blogs.pending') }}" class="btn btn-ghost btn-sm">Tümünü Gör →</a>
+    </div>
+
+    <div class="panel-table-wrap">
+        <table class="panel-table">
             <thead>
-                <tr class="border-b">
-                    <th class="text-left py-2">Başlık</th>
-                    <th class="text-left py-2">Yazar</th>
-                    <th class="text-left py-2">Kategori</th>
-                    <th class="text-left py-2">Tarih</th>
-                    <th class="text-left py-2">İşlem</th>
+                <tr>
+                    <th>Başlık</th>
+                    <th>Yazar</th>
+                    <th>Kategori</th>
+                    <th>Tarih</th>
+                    <th>Uyarı</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse(\App\Models\Blog::where('status', 'pending')->latest()->take(5)->get() as $blog)
-                    <tr class="border-b">
-                        <td class="py-2">{{ $blog->title }}</td>
-                        <td class="py-2">{{ $blog->user->name }}</td>
-                        <td class="py-2">{{ $blog->category->name }}</td>
-                        <td class="py-2">{{ $blog->created_at->format('d.m.Y') }}</td>
-                        <td class="py-2">
+                    <tr>
+                        <td>
+                            <span style="font-weight:600; color:#f1f5f9;">{{ Str::limit($blog->title, 45) }}</span>
+                        </td>
+                        <td>{{ $blog->user->name }}</td>
+                        <td>
+                            <span class="badge badge-cyan">{{ $blog->category->name }}</span>
+                        </td>
+                        <td style="color:rgba(255,255,255,0.4); font-size:12.5px;">{{ $blog->created_at->format('d.m.Y') }}</td>
+                        <td>
                             @if ($blog->has_profanity)
-                                <span class="text-red-600 text-sm">⚠️ Küfür uyarısı!</span>
+                                <span class="badge badge-danger">⚠️ Uyarı</span>
+                            @else
+                                <span style="color:rgba(255,255,255,0.2); font-size:12px;">—</span>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="py-4 text-gray-500 text-center">Onay bekleyen yazı yok.</td>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🎉</div>
+                                <div class="empty-state-text">Onay bekleyen yazı yok.</div>
+                            </div>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>

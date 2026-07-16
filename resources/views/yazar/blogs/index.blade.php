@@ -3,70 +3,64 @@
 @section('title', 'Yazılarım')
 
 @section('content')
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">📝 Yazılarım</h2>
-        <a href="{{ route('yazar.blogs.create') }}"
-            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+
+    <div class="page-header">
+        <h2 class="page-title">
+            <span class="page-title-icon">📝</span>
+            Yazılarım
+        </h2>
+        <a href="{{ route('yazar.blogs.create') }}" class="btn btn-primary btn-sm">
             ➕ Yeni Yazı Yaz
         </a>
     </div>
 
-    {{-- Mesajlar --}}
     @if (session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4">
-            ✅ {{ session('success') }}
-        </div>
+        <div class="alert alert-success">✅ {{ session('success') }}</div>
     @endif
     @if (session('error'))
-        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
-            ❌ {{ session('error') }}
-        </div>
+        <div class="alert alert-error">❌ {{ session('error') }}</div>
     @endif
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-50 border-b">
+    <div class="panel-table-wrap">
+        <table class="panel-table">
+            <thead>
                 <tr>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Başlık</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Kategori</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Durum</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Tarih</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">İşlemler</th>
+                    <th>Başlık</th>
+                    <th>Kategori</th>
+                    <th>Durum</th>
+                    <th>Tarih</th>
+                    <th>İşlemler</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody>
                 @forelse ($blogs as $blog)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-800">
-                            {{ Str::limit($blog->title, 60) }}
+                    <tr>
+                        <td>
+                            <span style="font-weight:600; color:#f1f5f9;">{{ Str::limit($blog->title, 60) }}</span>
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">
-                            {{ $blog->category->name }}
+                        <td>
+                            <span class="badge badge-cyan">{{ $blog->category->name }}</span>
                         </td>
-                        <td class="px-4 py-3">
+                        <td>
                             @if ($blog->status === 'approved')
-                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">✅ Onaylı - Yayında</span>
+                                <span class="badge badge-success">✅ Onaylı — Yayında</span>
                             @elseif ($blog->status === 'pending')
-                                <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">⏳ Onay Bekliyor</span>
+                                <span class="badge badge-warning">⏳ Onay Bekliyor</span>
                             @else
-                                <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">❌ Reddedildi</span>
+                                <span class="badge badge-danger">❌ Reddedildi</span>
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-500">
-                            {{ $blog->created_at->format('d.m.Y') }}
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center gap-2">
+                        <td style="color:rgba(255,255,255,0.4); font-size:12.5px;">{{ $blog->created_at->format('d.m.Y') }}</td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:6px;">
                                 @if ($blog->status !== 'approved')
-                                    <a href="{{ route('yazar.blogs.edit', $blog) }}"
-                                        class="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1 rounded transition">
+                                    <a href="{{ route('yazar.blogs.edit', $blog) }}" class="btn btn-ghost btn-sm">
                                         ✏️ Düzenle
                                     </a>
                                 @endif
                                 <form action="{{ route('yazar.blogs.destroy', $blog) }}" method="POST">
                                     @csrf @method('DELETE')
-                                    <button type="submit"
-                                        class="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded transition"
+                                    <button type="submit" class="btn btn-danger btn-sm"
                                         onclick="return confirm('Bu yazıyı silmek istediğinizden emin misiniz?')">
                                         🗑 Sil
                                     </button>
@@ -76,12 +70,12 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-12 text-center">
-                            <p class="text-gray-400 text-lg mb-3">Henüz yazı paylaşmadınız.</p>
-                            <a href="{{ route('yazar.blogs.create') }}"
-                                class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-                                ➕ İlk Yazını Yaz
-                            </a>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">✍️</div>
+                                <div class="empty-state-text">Henüz yazı paylaşmadınız.</div>
+                                <a href="{{ route('yazar.blogs.create') }}" class="btn btn-primary">➕ İlk Yazını Yaz</a>
+                            </div>
                         </td>
                     </tr>
                 @endforelse
@@ -89,5 +83,5 @@
         </table>
     </div>
 
-    <div class="mt-4">{{ $blogs->links() }}</div>
+    <div class="pagination-wrap">{{ $blogs->links() }}</div>
 @endsection

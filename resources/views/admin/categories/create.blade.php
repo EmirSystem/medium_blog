@@ -3,36 +3,43 @@
 @section('title', 'Yeni Kategori Oluştur')
 
 @section('content')
-    <div class="mb-6">
-        <a href="{{ route('admin.categories.index') }}" class="text-blue-600 hover:underline text-sm">← Kategorilere Dön</a>
-        <h2 class="text-2xl font-bold text-gray-800 mt-2">➕ Yeni Kategori Oluştur</h2>
+
+    <a href="{{ route('admin.categories.index') }}" class="back-link">← Kategorilere Dön</a>
+
+    <div class="page-header">
+        <h2 class="page-title">
+            <span class="page-title-icon">➕</span>
+            Yeni Kategori Oluştur
+        </h2>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 max-w-lg">
+    <div class="form-card" style="max-width:520px;">
         <form action="{{ route('admin.categories.store') }}" method="POST">
             @csrf
 
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Kategori Adı *</label>
+            <div class="form-group">
+                <label for="name" class="form-label">Kategori Adı <span>*</span></label>
                 <input type="text" id="name" name="name" value="{{ old('name') }}"
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror"
+                    class="form-input @error('name') is-error @enderror"
                     placeholder="ör. Bilim, Teknoloji, Matematik">
                 @error('name')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="form-error">{{ $message }}</p>
                 @enderror
             </div>
 
-            <div class="mb-6">
-                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+            <div class="form-group">
+                <label for="description" class="form-label">Açıklama <span>(isteğe bağlı)</span></label>
                 <textarea id="description" name="description" rows="3"
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Kategori hakkında kısa açıklama (isteğe bağlı)">{{ old('description') }}</textarea>
+                    class="form-textarea"
+                    placeholder="Kategori hakkında kısa açıklama">{{ old('description') }}</textarea>
             </div>
 
-            <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition">
-                ✅ Kategori Oluştur
-            </button>
+            <div style="display:flex; align-items:center; gap:12px; margin-top:8px;">
+                <button type="submit" class="btn btn-primary">
+                    ✅ Kategori Oluştur
+                </button>
+                <a href="{{ route('admin.categories.index') }}" class="btn btn-ghost">İptal</a>
+            </div>
         </form>
     </div>
 @endsection

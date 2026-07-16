@@ -3,62 +3,66 @@
 @section('title', 'Kategori Yönetimi')
 
 @section('content')
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">📁 Kategori Yönetimi</h2>
-        <a href="{{ route('admin.categories.create') }}"
-            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+
+    <div class="page-header">
+        <h2 class="page-title">
+            <span class="page-title-icon">📁</span>
+            Kategori Yönetimi
+        </h2>
+        <a href="{{ route('admin.categories.create') }}" class="btn btn-primary btn-sm">
             ➕ Yeni Kategori
         </a>
     </div>
 
     @if (session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4">✅ {{ session('success') }}</div>
+        <div class="alert alert-success">✅ {{ session('success') }}</div>
     @endif
     @if (session('error'))
-        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">❌ {{ session('error') }}</div>
+        <div class="alert alert-error">❌ {{ session('error') }}</div>
     @endif
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-50 border-b">
+    <div class="panel-table-wrap">
+        <table class="panel-table">
+            <thead>
                 <tr>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Kategori Adı</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Slug</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Blog Sayısı</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Durum</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">İşlemler</th>
+                    <th>Kategori Adı</th>
+                    <th>Slug</th>
+                    <th>Blog Sayısı</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody>
                 @forelse ($categories as $category)
-                    <tr class="hover:bg-gray-50 {{ $category->status === 'passive' ? 'opacity-60' : '' }}">
-                        <td class="px-4 py-3 font-medium text-gray-800">{{ $category->name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500 font-mono">{{ $category->slug }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $category->blogs_count }} yazı</td>
-                        <td class="px-4 py-3">
+                    <tr style="{{ $category->status === 'passive' ? 'opacity:0.55;' : '' }}">
+                        <td>
+                            <span style="font-weight:600; color:#f1f5f9;">{{ $category->name }}</span>
+                        </td>
+                        <td>
+                            <code style="font-size:12px; color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:5px; font-family:monospace;">{{ $category->slug }}</code>
+                        </td>
+                        <td>
+                            <span class="badge badge-info">{{ $category->blogs_count }} yazı</span>
+                        </td>
+                        <td>
                             @if ($category->status === 'active')
-                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">✅ Aktif</span>
+                                <span class="badge badge-success">✅ Aktif</span>
                             @else
-                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full font-medium">⏸ Pasif</span>
+                                <span class="badge badge-gray">⏸ Pasif</span>
                             @endif
                         </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center gap-2">
-                                {{-- Aktif/Pasif Toggle --}}
+                        <td>
+                            <div style="display:flex; align-items:center; gap:6px;">
                                 <form action="{{ route('admin.categories.toggleStatus', $category) }}" method="POST">
                                     @csrf @method('PATCH')
                                     <button type="submit"
-                                        class="text-xs {{ $category->status === 'active' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' }} px-3 py-1 rounded transition"
-                                        title="{{ $category->status === 'active' ? 'Pasifleştir' : 'Aktifleştir' }}">
+                                        class="btn btn-sm {{ $category->status === 'active' ? 'btn-warning' : 'btn-success' }}">
                                         {{ $category->status === 'active' ? '⏸ Pasifleştir' : '▶️ Aktifleştir' }}
                                     </button>
                                 </form>
-
-                                {{-- Sil --}}
                                 <form action="{{ route('admin.categories.destroy', $category) }}" method="POST">
                                     @csrf @method('DELETE')
-                                    <button type="submit"
-                                        class="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded transition"
+                                    <button type="submit" class="btn btn-danger btn-sm"
                                         onclick="return confirm('\"{{ $category->name }}\" kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')">
                                         🗑 Sil
                                     </button>
@@ -68,12 +72,18 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-400">Henüz kategori oluşturulmamış.</td>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📁</div>
+                                <div class="empty-state-text">Henüz kategori oluşturulmamış.</div>
+                                <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">➕ İlk Kategoriyi Oluştur</a>
+                            </div>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <div class="mt-4">{{ $categories->links() }}</div>
+    <div class="pagination-wrap">{{ $categories->links() }}</div>
 @endsection

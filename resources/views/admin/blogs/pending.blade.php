@@ -3,83 +3,74 @@
 @section('title', 'Onay Bekleyen Yazılar')
 
 @section('content')
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">📋 Onay Bekleyen Yazılar</h2>
-        <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
-            {{ $blogs->total() }} yazı bekliyor
-        </span>
+
+    <div class="page-header">
+        <h2 class="page-title">
+            <span class="page-title-icon">📋</span>
+            Onay Bekleyen Yazılar
+        </h2>
+        <span class="badge badge-warning">{{ $blogs->total() }} yazı bekliyor</span>
     </div>
 
-    {{-- Başarı/Hata mesajları --}}
     @if (session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4">
-            ✅ {{ session('success') }}
-        </div>
+        <div class="alert alert-success">✅ {{ session('success') }}</div>
     @endif
     @if (session('error'))
-        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
-            ❌ {{ session('error') }}
-        </div>
+        <div class="alert alert-error">❌ {{ session('error') }}</div>
     @endif
 
     @forelse ($blogs as $blog)
-        <div class="bg-white rounded-lg shadow mb-4 overflow-hidden">
-            <div class="p-5">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-2">
-                            <h3 class="text-lg font-bold text-gray-900">{{ $blog->title }}</h3>
-                            {{-- Küfür Uyarısı --}}
+        <div class="blog-review-card">
+            <div class="blog-review-body">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px;">
+                    <div style="flex:1;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                            <h3 style="font-size:16px; font-weight:700; color:#f1f5f9; margin:0;">{{ $blog->title }}</h3>
                             @if ($blog->has_profanity)
-                                <span class="inline-flex items-center gap-1 bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">
-                                    ⚠️ Sakıncalı İçerik Uyarısı
-                                </span>
+                                <span class="badge badge-danger">⚠️ Sakıncalı İçerik</span>
                             @endif
                         </div>
 
-                        <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                            <span>👤 {{ $blog->user->name }}</span>
-                            <span>📁 {{ $blog->category->name }}</span>
-                            <span>📅 {{ $blog->created_at->format('d.m.Y H:i') }}</span>
-                            <span>📝 {{ mb_strlen(strip_tags($blog->content)) }} karakter</span>
+                        <div style="display:flex; align-items:center; gap:16px; margin-bottom:12px;">
+                            <span style="font-size:12.5px; color:rgba(255,255,255,0.45); display:flex; align-items:center; gap:5px;">
+                                👤 {{ $blog->user->name }}
+                            </span>
+                            <span class="badge badge-cyan" style="font-size:11px;">{{ $blog->category->name }}</span>
+                            <span style="font-size:12.5px; color:rgba(255,255,255,0.35);">
+                                📅 {{ $blog->created_at->format('d.m.Y H:i') }}
+                            </span>
+                            <span style="font-size:12.5px; color:rgba(255,255,255,0.35);">
+                                📝 {{ mb_strlen(strip_tags($blog->content)) }} karakter
+                            </span>
                         </div>
-
-                        {{-- Küfür varsa detay uyarısı --}}
-                        @if ($blog->has_profanity)
-                            <div class="bg-red-50 border border-red-200 rounded p-3 mb-3">
-                                <p class="text-red-700 text-sm font-medium">
-                                    ⚠️ Bu yazıda yasaklı kelime/ifade tespit edildi. Lütfen içeriği dikkatlice inceleyin.
-                                </p>
-                            </div>
-                        @endif
-
-                        {{-- İçerik önizleme --}}
-                        <p class="text-gray-600 text-sm bg-gray-50 p-3 rounded">
-                            {{ Str::limit(strip_tags($blog->content), 250) }}
-                        </p>
                     </div>
+                </div>
+
+                @if ($blog->has_profanity)
+                    <div class="profanity-warning">
+                        ⚠️ Bu yazıda yasaklı kelime/ifade tespit edildi. Lütfen içeriği dikkatlice inceleyin.
+                    </div>
+                @endif
+
+                <div class="content-preview">
+                    {{ Str::limit(strip_tags($blog->content), 260) }}
                 </div>
             </div>
 
-            {{-- Aksiyon Butonları --}}
-            <div class="px-5 py-3 bg-gray-50 border-t flex items-center gap-3">
-                {{-- Onayla --}}
+            <div class="blog-review-footer">
                 <form action="{{ route('admin.blogs.approve', $blog) }}" method="POST">
                     @csrf
                     @method('PATCH')
-                    <button type="submit"
-                        class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+                    <button type="submit" class="btn btn-success btn-sm"
                         onclick="return confirm('Bu yazıyı onaylayıp yayınlamak istediğinizden emin misiniz?')">
                         ✅ Onayla & Yayınla
                     </button>
                 </form>
 
-                {{-- Reddet --}}
                 <form action="{{ route('admin.blogs.reject', $blog) }}" method="POST">
                     @csrf
                     @method('PATCH')
-                    <button type="submit"
-                        class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+                    <button type="submit" class="btn btn-danger btn-sm"
                         onclick="return confirm('Bu yazıyı reddetmek istediğinizden emin misiniz?')">
                         ❌ Reddet
                     </button>
@@ -87,14 +78,13 @@
             </div>
         </div>
     @empty
-        <div class="bg-white rounded-lg shadow p-12 text-center">
-            <p class="text-5xl mb-4">🎉</p>
-            <p class="text-gray-500 text-lg">Onay bekleyen yazı bulunmuyor.</p>
+        <div class="panel-table-wrap">
+            <div class="empty-state">
+                <div class="empty-state-icon">🎉</div>
+                <div class="empty-state-text">Onay bekleyen yazı bulunmuyor. Her şey temiz!</div>
+            </div>
         </div>
     @endforelse
 
-    {{-- Sayfalama --}}
-    <div class="mt-4">
-        {{ $blogs->links() }}
-    </div>
+    <div class="pagination-wrap">{{ $blogs->links() }}</div>
 @endsection

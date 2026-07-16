@@ -3,58 +3,69 @@
 @section('title', 'Tüm Yazılar')
 
 @section('content')
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">📚 Tüm Blog Yazıları</h2>
-        <span class="text-sm text-gray-500">Toplam: {{ $blogs->total() }}</span>
+
+    <div class="page-header">
+        <h2 class="page-title">
+            <span class="page-title-icon">📚</span>
+            Tüm Blog Yazıları
+        </h2>
+        <span class="badge badge-gray">Toplam: {{ $blogs->total() }}</span>
     </div>
 
     @if (session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4">✅ {{ session('success') }}</div>
+        <div class="alert alert-success">✅ {{ session('success') }}</div>
     @endif
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-50 border-b">
+    <div class="panel-table-wrap">
+        <table class="panel-table">
+            <thead>
                 <tr>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Başlık</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Yazar</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Kategori</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Durum</th>
-                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Tarih</th>
+                    <th>Başlık</th>
+                    <th>Yazar</th>
+                    <th>Kategori</th>
+                    <th>Durum</th>
+                    <th>Tarih</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody>
                 @forelse ($blogs as $blog)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3">
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium text-gray-800">{{ Str::limit($blog->title, 50) }}</span>
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-weight:600; color:#f1f5f9;">{{ Str::limit($blog->title, 50) }}</span>
                                 @if ($blog->has_profanity)
-                                    <span class="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">⚠️ Uyarı</span>
+                                    <span class="badge badge-danger" style="font-size:10px;">⚠️ Uyarı</span>
                                 @endif
                             </div>
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $blog->user->name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">{{ $blog->category->name }}</td>
-                        <td class="px-4 py-3">
+                        <td style="color:rgba(255,255,255,0.55);">{{ $blog->user->name }}</td>
+                        <td>
+                            <span class="badge badge-cyan">{{ $blog->category->name }}</span>
+                        </td>
+                        <td>
                             @if ($blog->status === 'approved')
-                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">✅ Onaylı</span>
+                                <span class="badge badge-success">✅ Onaylı</span>
                             @elseif ($blog->status === 'pending')
-                                <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">⏳ Bekliyor</span>
+                                <span class="badge badge-warning">⏳ Bekliyor</span>
                             @else
-                                <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">❌ Reddedildi</span>
+                                <span class="badge badge-danger">❌ Reddedildi</span>
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-500">{{ $blog->created_at->format('d.m.Y') }}</td>
+                        <td style="color:rgba(255,255,255,0.4); font-size:12.5px;">{{ $blog->created_at->format('d.m.Y') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-400">Hiç yazı bulunamadı.</td>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📭</div>
+                                <div class="empty-state-text">Hiç yazı bulunamadı.</div>
+                            </div>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <div class="mt-4">{{ $blogs->links() }}</div>
+    <div class="pagination-wrap">{{ $blogs->links() }}</div>
 @endsection
