@@ -28,7 +28,7 @@ class Blog extends Model
 
     public function user()
     {
-        return $this->blongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function category()

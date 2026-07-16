@@ -15,7 +15,7 @@ class RoleSeeder extends Seeder
     {
         Role::create([
             'name' => 'Süper Admin',
-            'slug' => 'süper-admin',
+            'slug' => 'super-admin',
             'description' => 'Sistemin tam yetkili yöneticisi',
             'status' => 'active',
         ]);

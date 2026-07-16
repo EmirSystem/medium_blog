@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BannedWord extends Model
 {
-    use hasFactory;
+    use HasFactory;
 
     protected $fillable = ['word', 'status'];
 }
