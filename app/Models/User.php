@@ -49,11 +49,11 @@ class User extends Authenticatable
 
     public function isSuperAdmin()
     {
-        return $this->role->slug === 'super-admin';
+        return $this->role?->slug === 'super-admin';
     }
 
     public function isYazar()
     {
-        return $this->role->slug === 'yazar';
+        return $this->role?->slug === 'yazar';
     }
 }
